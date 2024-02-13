@@ -1,4 +1,5 @@
 from fastapi import FastAPI,Path,Query,HTTPException
+from typing import Optional
 
 app=FastAPI()
 
@@ -30,8 +31,8 @@ def get_student(student_id:int= Path(...,description="The ID of the student you 
     return students[student_id]
 
 #Get by full name
-@app.get("/get-by-name")
-def get_student(name:str):
+@app.get("/get-by-name/{student_id}")
+def get_student(*,student_id:int,name:Optional[str]=None,test:int):
     for student_id in students:
         if students[student_id]["name"]==name:
             return students[student_id]
@@ -39,7 +40,7 @@ def get_student(name:str):
     
 
 #Get by character
-@app.get("/students/")
+@app.get("/get-by-name-character/")
 async def search_students_by_name(query_name: str = Query(..., description="Search students by name")):
     matching_students = [
         student for student in students.values() if query_name.lower() in student["name"].lower()
@@ -47,3 +48,4 @@ async def search_students_by_name(query_name: str = Query(..., description="Sear
     if not matching_students:
         raise HTTPException(status_code=404, detail="No student found")
     return {"matching_students": matching_students}
+
