@@ -11,7 +11,7 @@ env/
 .idea/
 .env
 *.swp
-
+.python-version
 # Django Migration Files
 **/migrations/*.py
 **/migrations/*.pyc

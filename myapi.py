@@ -1,6 +1,6 @@
 from fastapi import FastAPI,Path,Query,HTTPException
 from typing import Optional
-
+from pydantic import BaseModel
 app=FastAPI()
 
 students= {
@@ -17,6 +17,12 @@ students= {
 }
 
 
+class Student(BaseModel):
+    name:str
+    dept:str
+    student_id:str
+
+
 @app.get("/")
 def index():
     return {"name":"Momin"}
@@ -30,7 +36,7 @@ def get_student(student_id:int= Path(...,description="The ID of the student you 
     #gt=Greater than, lt=less than, ge=Greater than equal ,le=less than equal
     return students[student_id]
 
-#Get by full name
+#Get by fullname
 @app.get("/get-by-name/{student_id}")
 def get_student(*,student_id:int,name:Optional[str]=None,test:int):
     for student_id in students:
