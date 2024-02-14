@@ -1,5 +1,6 @@
 from fastapi import FastAPI,Path,Query,HTTPException
 from typing import Optional
+from pydantic import BaseModel
 
 app=FastAPI()
 
@@ -16,19 +17,30 @@ students= {
     10: {"name": "Isabel Carter", "dept": "Geology", "student_id": "GL12389"}
 }
 
+class Student(BaseModel):
+    name:str
+    dept:str
+    student_id:str
+
+
 
 @app.get("/")
 def index():
     return {"name":"Momin"}
+
+
 #List data
 @app.get("/all/students")
 def all_students():
     return students
+
+
 #Get by Id
 @app.get("/get-student/{student_id}")
 def get_student(student_id:int= Path(...,description="The ID of the student you want to view.",gt=0,lt=10)):
     #gt=Greater than, lt=less than, ge=Greater than equal ,le=less than equal
     return students[student_id]
+
 
 #Get by full name
 @app.get("/get-by-name/{student_id}")
@@ -38,6 +50,7 @@ def get_student(*,student_id:int,name:Optional[str]=None,test:int):
             return students[student_id]
         return {"Message":"Data not found"}
     
+
 
 #Get by character
 @app.get("/get-by-name-character/")
@@ -49,3 +62,11 @@ async def search_students_by_name(query_name: str = Query(..., description="Sear
         raise HTTPException(status_code=404, detail="No student found")
     return {"matching_students": matching_students}
 
+
+#Create
+@app.post("/create-student/{student_id}")
+def create_student(student_id:int ,student:Student):
+    if student_id in students:
+        return {"Error":"This Student is already exist"}
+    students[student_id]=student
+    return students[student_id]
