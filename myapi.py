@@ -55,3 +55,10 @@ async def search_students_by_name(query_name: str = Query(..., description="Sear
         raise HTTPException(status_code=404, detail="No student found")
     return {"matching_students": matching_students}
 
+#Create Student
+@app.post("/create-student/{student_id}")
+def create_student(student_id: int ,student:Student):
+    if student_id in student:
+        return {"Error":"This student is already exist"}
+    students[student_id]=student
+    return students[student_id]
