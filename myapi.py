@@ -23,6 +23,11 @@ class Student(BaseModel):
     student_id:str
 
 
+class UpdateStudnet(BaseModel):
+    name:Optional[str]=None
+    dept:Optional[str]=None
+    student_id:Optional[str]=None
+
 
 @app.get("/")
 def index():
@@ -70,3 +75,22 @@ def create_student(student_id:int ,student:Student):
         return {"Error":"This Student is already exist"}
     students[student_id]=student
     return students[student_id]
+
+
+#Update
+@app.put("/update-student/{student_id}")
+def update_student(student_id:int, student:UpdateStudnet):
+    if student_id not in students:
+        return{"Error":"Student is not found"}
+    
+    if student.name !=None:
+        students[student_id].name=student.name
+
+    if student.dept !=None:
+        students[student_id].dept=student.dept
+
+    if student.student_id !=None:
+        students[student_id].student_id=student.student_id
+         
+    return students[student_id]
+    
