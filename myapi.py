@@ -16,6 +16,17 @@ students= {
     10: {"name": "Isabel Carter", "dept": "Geology", "student_id": "GL12389"}
 }
 
+class Student(BaseModel):
+    name:str
+    dept:str
+    student_id:str
+
+
+class UpdateStudnet(BaseModel):
+    name:Optional[str]=None
+    dept:Optional[str]=None
+    student_id:Optional[str]=None
+
 
 class Student(BaseModel):
     name:str
@@ -26,10 +37,14 @@ class Student(BaseModel):
 @app.get("/")
 def index():
     return {"name":"Momin"}
+
+
 #List data
 @app.get("/all/students")
 def all_students():
     return students
+
+
 #Get by Id
 @app.get("/get-student/{student_id}")
 def get_student(student_id:int= Path(...,description="The ID of the student you want to view.",gt=0,lt=10)):
@@ -37,6 +52,8 @@ def get_student(student_id:int= Path(...,description="The ID of the student you 
     return students[student_id]
 
 #Get by fullname
+
+#Get by full name
 @app.get("/get-by-name/{student_id}")
 def get_student(*,student_id:int,name:Optional[str]=None,test:int):
     for student_id in students:
@@ -44,6 +61,7 @@ def get_student(*,student_id:int,name:Optional[str]=None,test:int):
             return students[student_id]
         return {"Message":"Data not found"}
     
+
 
 #Get by character
 @app.get("/get-by-name-character/")
@@ -55,10 +73,39 @@ async def search_students_by_name(query_name: str = Query(..., description="Sear
         raise HTTPException(status_code=404, detail="No student found")
     return {"matching_students": matching_students}
 
-#Create Student
+
+#Create
 @app.post("/create-student/{student_id}")
-def create_student(student_id: int ,student:Student):
-    if student_id in student:
-        return {"Error":"This student is already exist"}
+def create_student(student_id:int ,student:Student):
+    if student_id in students:
+        return {"Error":"This Student is already exist"}
     students[student_id]=student
     return students[student_id]
+
+
+#Update
+@app.put("/update-student/{student_id}")
+def update_student(student_id:int, student:UpdateStudnet):
+    if student_id not in students:
+        return{"Error":"Student is not found"}
+    
+    if student.name !=None:
+        students[student_id].name=student.name
+
+    if student.dept !=None:
+        students[student_id].dept=student.dept
+
+    if student.student_id !=None:
+        students[student_id].student_id=student.student_id
+         
+    return students[student_id]
+    
+
+
+#Delete
+@app.delete("/delete-student/{student_id}")
+def delete_student(student_id:int):
+    if student_id not in students:
+        return{"Error":"This student does dot in List"}
+    del students[student_id]
+    return{"Message":"Student deleted Successfully"}
