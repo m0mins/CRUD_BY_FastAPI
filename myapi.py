@@ -94,3 +94,12 @@ def update_student(student_id:int, student:UpdateStudnet):
          
     return students[student_id]
     
+
+
+#Delete
+@app.delete("/delete-student/{student_id}")
+def delete_student(student_id:int):
+    if student_id not in students:
+        return{"Error":"This student does dot in List"}
+    del students[student_id]
+    return{"Message":"Student deleted Successfully"}
